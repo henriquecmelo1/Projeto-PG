@@ -1,7 +1,6 @@
-import math
 from PIL import Image
-import sys
-from componentes import Vec, Ray, HitRecord, HitableList, Sphere
+import random
+from componentes import Vec, Ray, HitRecord, HitableList, Sphere, Camera
 
 def view_ppm(file_path):
     img = Image.open(file_path)
@@ -37,20 +36,29 @@ def color(ray, world):
 
 def main():
     nx, ny = 200, 100
+    ns = 100  # números de amostras para antialiasing
+
     lower_left_corner = Vec(-2.0, -1.0, -1.0)
     horizontal = Vec(4.0, 0.0, 0.0)
     vertical = Vec(0.0, 2.0, 0.0)
     origin = Vec(0.0, 0.0, 0.0)
+
+    camera = Camera(origin, lower_left_corner, horizontal, vertical)
     world = HitableList([Sphere(Vec(0, 0, -1), 0.5), Sphere(Vec(0, -100.5, -1), 100)])
 
     with open("output.ppm", "w") as out:
         out.write(f"P3\n{nx} {ny}\n255\n")
         for j in range(ny-1, -1, -1):
             for i in range(nx):
-                u = i / nx
-                v = j / ny
-                ray = Ray(origin, lower_left_corner + horizontal * u + vertical * v)
-                col = color(ray, world)
+                col = Vec(0, 0, 0)
+
+                for s in range(ns):
+                    u = (i + random.random()) / nx
+                    v = (j + random.random()) / ny
+                    ray = camera.get_ray(u, v)
+                    col += color(ray, world)
+                
+                col /= ns
                 ir, ig, ib = int(255.99 * col.r()), int(255.99 * col.g()), int(255.99 * col.b())
                 out.write(f"{ir} {ig} {ib}\n")
  

@@ -43,8 +43,8 @@ class Vec:
         else:  # multiplicação escalar
             return Vec(self.e[0] * other, self.e[1] * other, self.e[2] * other)
  
-    # def __rmul__(self, other):
-    #     return self.__mul__(other)
+    def __rmul__(self, other):
+        return self.__mul__(other)
  
     def __truediv__(self, other): # divisão de um vetor por um escalar
         return Vec(self.e[0] / other, self.e[1] / other, self.e[2] / other)

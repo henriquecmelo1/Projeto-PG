@@ -1,53 +1,58 @@
 import math
 from PIL import Image
 import sys
-from componentes import Vec, Ray
+from componentes import Vec, Ray, HitRecord, HitableList, Sphere
 
 def view_ppm(file_path):
     img = Image.open(file_path)
     img.show()
 
-def hit_sphere(center, radius, r):
-    oc = r.origin() - center
-    a = r.direction().dot(r.direction())
-    b = 2.0 * oc.dot(r.direction())
-    c = oc.dot(oc) - radius * radius
-    discriminant = b*b - 4*a*c
+# def hit_sphere(center, radius, r):
+#     oc = r.origin() - center
+#     a = r.direction().dot(r.direction())
+#     b = 2.0 * oc.dot(r.direction())
+#     c = oc.dot(oc) - radius * radius
+#     discriminant = b*b - 4*a*c
 
-    return discriminant > 0
+#     return discriminant > 0
 
-def color(r):
-    if hit_sphere(Vec(0, 0, -1), 0.5, r):
-        return Vec(1, 0, 0) # retorna a cor vermelha
-    unit_direction = Vec.unit_vector(r.direction())
-    t = 0.5 * (unit_direction.y() + 1.0)
-    temp1 = Vec.__mul__(Vec(1.0, 1.0, 1.0), (1.0-t))
-    temp2 = Vec.__mul__(Vec(0.5, 0.7, 1.0), t)
-    return Vec.__add__(temp1, temp2)
+# def color(r):
+#     if hit_sphere(Vec(0, 0, -1), 0.5, r):
+#         return Vec(1, 0, 0) # retorna a cor vermelha
+#     unit_direction = Vec.unit_vector(r.direction())
+#     t = 0.5 * (unit_direction.y() + 1.0)
+#     temp1 = Vec.__mul__(Vec(1.0, 1.0, 1.0), (1.0-t))
+#     temp2 = Vec.__mul__(Vec(0.5, 0.7, 1.0), t)
+#     return Vec.__add__(temp1, temp2)
+
+def color(ray, world):
+    rec = HitRecord()
+    if world.hit(ray, 0.1, float('inf'), rec):
+        return 0.5 * (rec.normal + Vec(1, 1, 1))  # Visualização das normais como cores
+    else:
+        unit_direction = ray.direction().unit_vector()
+        t = 0.5 * (unit_direction.y() + 1.0)
+        return Vec(1.0, 1.0, 1.0) * (1.0 - t) + Vec(0.5, 0.7, 1.0) * t
+
 
 def main():
-    nx = 200
-    ny = 100
+    nx, ny = 200, 100
     lower_left_corner = Vec(-2.0, -1.0, -1.0)
     horizontal = Vec(4.0, 0.0, 0.0)
     vertical = Vec(0.0, 2.0, 0.0)
     origin = Vec(0.0, 0.0, 0.0)
+    world = HitableList([Sphere(Vec(0, 0, -1), 0.5), Sphere(Vec(0, -100.5, -1), 100)])
 
     with open("output.ppm", "w") as out:
-        out.write("P3\n{} {}\n255\n".format(nx, ny)) # Cabeçalho do arquivo PPM
+        out.write(f"P3\n{nx} {ny}\n255\n")
         for j in range(ny-1, -1, -1):
             for i in range(nx):
-                u = float(i) / float(nx)
-                v = float(j) / float(ny)
-                r = Ray(origin, lower_left_corner + Vec.__mul__(horizontal, u)+ Vec.__mul__(vertical, v))
-                col = color(r)
-                ir = int(255.99 * col.x())
-                ig = int(255.99 * col.y())
-                ib = int(255.99 * col.z())
-                # print(f"{ir} {ig} {ib}")
+                u = i / nx
+                v = j / ny
+                ray = Ray(origin, lower_left_corner + horizontal * u + vertical * v)
+                col = color(ray, world)
+                ir, ig, ib = int(255.99 * col.r()), int(255.99 * col.g()), int(255.99 * col.b())
                 out.write(f"{ir} {ig} {ib}\n")
-    # view_ppm('output.ppm')
-    
  
 if __name__ == "__main__":
     main()

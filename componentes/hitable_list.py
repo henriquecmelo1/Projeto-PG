@@ -5,7 +5,8 @@ class HitableList(Hitable):
     def __init__(self, hitables):
         self.hitables = hitables
 
-    def hit(self, ray, t_min, t_max, rec):
+    def hit(self, ray, t_min, t_max, rec): # Ray, float, float, HitRecord -> bool
+        # verifica se o raio atinge algum dos objetos
         hit_anything = False
         closest_so_far = t_max
         temp_rec = HitRecord()

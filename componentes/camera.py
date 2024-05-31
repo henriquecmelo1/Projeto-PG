@@ -7,5 +7,6 @@ class Camera:
         self.horizontal = horizontal
         self.vertical = vertical
 
-    def get_ray(self, u, v):
+    def get_ray(self, u, v): # float, float -> Ray
+        # Retorna um raio que passa pelo pixel na posição (u, v)
         return Ray(self.origin, self.lower_left_corner + u * self.horizontal + v * self.vertical - self.origin)

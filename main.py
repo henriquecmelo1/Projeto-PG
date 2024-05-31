@@ -61,6 +61,10 @@ def main():
                 col /= ns
                 ir, ig, ib = int(255.99 * col.r()), int(255.99 * col.g()), int(255.99 * col.b())
                 out.write(f"{ir} {ig} {ib}\n")
+
+    view_ppm('output.ppm')
+
+    
  
 if __name__ == "__main__":
     main()

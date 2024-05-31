@@ -13,13 +13,16 @@ def view_ppm(file_path):
         img.show()
 
 def main():
-    esfera1 = Esfera(Ponto(0, 0, 0), 1, Material(Cor(255, 0, 0), 0.5, 0.5, 0.5, 0.5))
+    esfera1 = Esfera(Ponto(0, 0, 0), 0.5, Material(Cor(255, 0, 0), 0.5, 0.5, 0.5, 0.5))
     esfera2 = Esfera(Ponto(0, 1, 0), 1, Material(Cor(0, 255, 0), 0.5, 0.5, 0.5, 0.5))
-    plano = Plano(Ponto(0, -1, 0), Vetor(0, 1, 0), Material(Cor(0, 0, 255), 0.5, 0.5, 0.5, 0.5))
+    plano = Plano(Ponto(5, -2, 0), Vetor(4, 1, 0), Material(Cor(0, 0, 255), 0.5, 0.5, 0.5, 0.5))
     camera = Camera(Ponto(0, 0, -5), Ponto(0, 0, 0), Vetor(0, 1, 0), 1, 200, 200)
 
 
-    cena = Cena(camera, [esfera1, esfera2, plano])
+    cena = Cena(camera, [])
+    cena.objetos.append(esfera1)
+    cena.objetos.append(esfera2)
+    cena.objetos.append(plano)
     cena.renderizar()
     view_ppm('output.ppm')
      

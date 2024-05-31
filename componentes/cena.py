@@ -1,6 +1,8 @@
 from .camera import Camera
 from .cor import Cor
 from .raio import Raio
+from .objeto import Objeto
+from .esfera import Esfera
 
 
 class Cena:

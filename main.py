@@ -1,5 +1,6 @@
 from PIL import Image
 import random
+import numpy as np
 from componentes import Vec, Ray, HitRecord, HitableList, Sphere, Camera
 
 def view_ppm(file_path):
@@ -24,14 +25,27 @@ def view_ppm(file_path):
 #     temp2 = Vec.__mul__(Vec(0.5, 0.7, 1.0), t)
 #     return Vec.__add__(temp1, temp2)
 
-def color(ray, world):
+# def color(ray, world):
+#     rec = HitRecord()
+#     if world.hit(ray, 0.1, float('inf'), rec):
+#         return 0.5 * (rec.normal + Vec(1, 1, 1))  # Visualização das normais como cores
+#     else:
+#         unit_direction = ray.direction().unit_vector()
+#         t = 0.5 * (unit_direction.y() + 1.0)
+#         return Vec(1.0, 1.0, 1.0) * (1.0 - t) + Vec(0.5, 0.7, 1.0) * t
+
+
+def color(r, world):
     rec = HitRecord()
-    if world.hit(ray, 0.1, float('inf'), rec):
-        return 0.5 * (rec.normal + Vec(1, 1, 1))  # Visualização das normais como cores
+    if world.hit(r, 0.0, float('inf'), rec):
+        target = rec.p + rec.normal + Vec.random_in_unit_sphere()
+        return 0.5 * color(Ray(rec.p, target - rec.p), world)
     else:
-        unit_direction = ray.direction().unit_vector()
-        t = 0.5 * (unit_direction.y() + 1.0)
-        return Vec(1.0, 1.0, 1.0) * (1.0 - t) + Vec(0.5, 0.7, 1.0) * t
+        unit_direction = Vec.unit_vector(r.direction())
+        t = 0.5 * (unit_direction[1] + 1.0)
+        return (1.0 - t) * Vec(1.0, 1.0, 1.0) + t * Vec(0.5, 0.7, 1.0)
+    
+
 
 
 def main():
@@ -56,10 +70,13 @@ def main():
                     u = (i + random.random()) / nx
                     v = (j + random.random()) / ny
                     ray = camera.get_ray(u, v)
-                    col += color(ray, world)
+                    col = col + color(ray, world)
                 
                 col /= ns
-                ir, ig, ib = int(255.99 * col.r()), int(255.99 * col.g()), int(255.99 * col.b())
+                col = Vec(np.sqrt(col[0]), np.sqrt(col[1]), np.sqrt(col[2]))
+                ir = int(255.99 * col[0])
+                ig = int(255.99 * col[1])
+                ib = int(255.99 * col[2])
                 out.write(f"{ir} {ig} {ib}\n")
 
     view_ppm('output.ppm')

@@ -1,4 +1,6 @@
 import math
+import random
+
 
 class Vec:
     def __init__(self, e0=0.0, e1=0.0, e2=0.0):
@@ -62,3 +64,15 @@ class Vec:
  
     def unit_vector(self):
         return self / self.length()
+    
+    def random_in_unit_sphere():
+        while True:
+            e1 = 2*random.random() - 1
+            e2 = 2*random.random() - 1
+            e3 = 2*random.random() - 1
+
+            p = Vec(e1, e2, e3)
+            if p.dot(p) < 1:
+                return p
+            
+    

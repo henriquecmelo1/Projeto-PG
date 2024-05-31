@@ -11,7 +11,7 @@ def view_ppm(file_path):
 def color(r, world):
     rec = HitRecord()
     if world.hit(r, 0.0, float('inf'), rec): # se o raio atinge um objeto
-        target = rec.p + rec.normal + Vec.random_in_unit_sphere() # ponto aleatório na esfera unitária
+        target = rec.p + rec.normal + Sphere.random_in_unit_sphere() # ponto aleatório na esfera unitária
         return 0.5 * color(Ray(rec.p, target - rec.p), world) # recursão
     else:
         unit_direction = Vec.unit_vector(r.direction()) # vetor unitário
